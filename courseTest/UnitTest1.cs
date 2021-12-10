@@ -15,6 +15,8 @@ namespace courseTest
         [SetUp]
         public void Setup()
         {
+
+
             driver = new ChromeDriver();
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
         }
