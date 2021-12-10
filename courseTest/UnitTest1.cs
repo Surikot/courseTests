@@ -25,7 +25,7 @@ namespace courseTest
         public void Test1()
         {
             driver.Url = "https://harabadealer.ru/";
-            driver.FindElement(By.XPath("/html/body/app-root/app-start-page/div/header/div/div/div/div[2]/button[2]")).Click();
+            driver.FindElement(By.Id("btn_showLogin")).Click();
         }
 
         [TearDown]
