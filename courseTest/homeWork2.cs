@@ -22,10 +22,13 @@ namespace courseTest
         }
 
         [Test]
-        public void Test1()
+        public void Test2()
         {
-            driver.Url = "https://harabadealer.ru/";
-            driver.FindElement(By.Id("btn_showLogin")).Click();
+            driver.Url = "http://localhost:8080/litecart/admin";
+            driver.FindElement(By.Name("username")).SendKeys("Surikat");
+            driver.FindElement(By.Name("password")).SendKeys("Suriunipub32");
+            driver.FindElement(By.Name("remember_me")).Click();
+            driver.FindElement(By.Name("login")).Click();
         }
 
         [TearDown]
