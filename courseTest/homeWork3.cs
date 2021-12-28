@@ -37,7 +37,7 @@ namespace courseTest
         }
 
         [Test]
-        public void Test2()
+        public void Test3()
         {
             _driver.Url = "http://localhost:8080/litecart/admin";
             _driver.FindElement(By.Name("username")).SendKeys("admin");
@@ -62,9 +62,20 @@ namespace courseTest
                 }
                 // Thread.Sleep(800);
             }
-            
-           
         }
+
+        [Test]
+        public void Test4()
+        {
+            _driver.Url = "http://localhost:8080/litecart/";
+            Thread.Sleep(100);
+
+            var items = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li"));
+            var stickers = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li//div[contains(@class,'sticker')]"));
+
+            Assert.AreEqual(items.Count, stickers.Count);
+        }
+
         [TearDown]
         public void Stop()
         {
