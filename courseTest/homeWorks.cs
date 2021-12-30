@@ -35,14 +35,12 @@ namespace courseTest
             _driver.FindElement(By.Name("password")).SendKeys(password);
             _driver.FindElement(By.Name("login")).Click();
         }
-        // private WebDriverWait _wait;
+        
 
         [SetUp]
         public void Setup()
         {
-
             _driver = new ChromeDriver();
-           // _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
         }
 
         [Test]
@@ -63,7 +61,7 @@ namespace courseTest
                     _driver.FindElement(By.XPath("//ul[@id='box-apps-menu']/li[" + i + "]/ul/li[" + j + "]")).Click();
                     Assert.IsTrue(IsElementPresent(_driver, By.XPath("//td[@id='content']/h1")));
                 }
-                // Thread.Sleep(800);
+                
             }
         }
 
@@ -75,7 +73,6 @@ namespace courseTest
 
             var items = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li"));
             var stickers = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li//div[contains(@class,'sticker')]"));
-
             Assert.AreEqual(items.Count, stickers.Count);
         }
 
@@ -86,11 +83,10 @@ namespace courseTest
             _driver.Url = "http://localhost:8080/litecart/admin/?app=countries&doc=countries";
             //получаем кол-во стран
             var countriesCnt = _driver.FindElements(By.XPath("//*[@id='content']/form/table/tbody/tr/td[6]")).Count;
-            // массивы для сравнения
             var countriesName = new List<string>();
             //для кодов стран, имеющих зоны > 0
             List<string> hasZones = new List<string>();
-            //заполняем массивы стран для сравнения и записываем коды стран, имеющих зоны > 0
+            //заполняем массив стран и записываем коды стран, имеющих зоны > 0
             for (int i = 2; i < countriesCnt + 2; i++)
             {
                 countriesName.Add(_driver.FindElement(By.XPath("//*[@id='content']/form/table/tbody/tr[" + i + "]/td[5]/a")).Text);
@@ -99,14 +95,13 @@ namespace courseTest
                     hasZones.Add(_driver.FindElement(By.XPath("//*[@id='content']/form/table/tbody/tr[" + i + "]/td[4]")).Text);
                 }
             }
-
             // сортируем массив стран
             var sortCountriesName = countriesName.OrderBy(x => x).ToList();
             //сравниваем массивы стран
             for (int i = 0; i < countriesCnt; i++)
                 Assert.IsTrue(sortCountriesName[i] == countriesName[i]);
             
-            //для каждой страны, имеющих кол-во зон > 0 открываем страницу этой страны и сравниваем также
+            //для каждой страны, имеющих кол-во зон > 0 открываем страницу этой страны и сравниваем также зоны
             foreach (string s in hasZones)
             {
                 _driver.Url = "http://localhost:8080/litecart/admin/?app=countries&doc=edit_country&country_code=" + s;
