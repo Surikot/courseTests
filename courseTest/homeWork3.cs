@@ -46,7 +46,7 @@ namespace courseTest
         }
 
         [Test]
-        public void Test3()
+        public void Task6()
         {
             authAdmin("admin", "admin");
             var menuTabs = _driver.FindElements(By.CssSelector("ul#box-apps-menu > li"));
@@ -68,7 +68,7 @@ namespace courseTest
         }
 
         [Test]
-        public void Test4()
+        public void Task7()
         {
             _driver.Url = "http://localhost:8080/litecart/";
             Thread.Sleep(100);
@@ -80,7 +80,7 @@ namespace courseTest
         }
 
         [Test]
-        public void Test5()
+        public void Task8()
         {
             authAdmin("admin", "admin");
             _driver.Url = "http://localhost:8080/litecart/admin/?app=countries&doc=countries";
@@ -125,7 +125,7 @@ namespace courseTest
             }
         }
         [Test]
-        public void Test6()
+        public void Task9()
         {
             authAdmin("admin", "admin");
             _driver.Url = "http://localhost:8080/litecart/admin/?app=geo_zones&doc=geo_zones";
