@@ -183,7 +183,6 @@ namespace courseTest
             string[] isRedColor1 = GetColorArray(campaignPrice1.GetCssValue("color"));
             Assert.IsTrue((isRedColor1[1] == "0") & (isRedColor1[2] == "0"));
 
-            Console.WriteLine(campaignPrice1.GetCssValue("text-decoration-style"));
             Assert.IsTrue(regularPrice1.GetCssValue("text-decoration").Contains("line-through")
                 & ((campaignPrice1.GetCssValue("text-decoration").Contains("solid")) || (campaignPrice1.GetCssValue("text-decoration").Contains("none")) || (campaignPrice1.GetCssValue("text-decoration-style").Contains("solid")) )
                 & (campaignPrice1.Size.Height > regularPrice1.Size.Height));
