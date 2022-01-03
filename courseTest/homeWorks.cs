@@ -35,12 +35,14 @@ namespace courseTest
             _driver.FindElement(By.Name("password")).SendKeys(password);
             _driver.FindElement(By.Name("login")).Click();
         }
-        
+
 
         [SetUp]
         public void Setup()
         {
+           
             _driver = new ChromeDriver();
+          
         }
 
         [Test]
@@ -50,18 +52,18 @@ namespace courseTest
             var menuTabs = _driver.FindElements(By.CssSelector("ul#box-apps-menu > li"));
             for (int i = 1; i < menuTabs.Count + 1; i++)
             {
-                _driver.FindElement(By.XPath("//ul[@id='box-apps-menu']/li["+i+"]")).Click();
+                _driver.FindElement(By.XPath("//ul[@id='box-apps-menu']/li[" + i + "]")).Click();
                 Assert.IsTrue(IsElementPresent(_driver, By.XPath("//td[@id='content']/h1")));
-                if (!IsElementPresent(_driver, By.XPath("//ul[@id='box-apps-menu']/li[" + i + "]/ul/li"))) 
+                if (!IsElementPresent(_driver, By.XPath("//ul[@id='box-apps-menu']/li[" + i + "]/ul/li")))
                     continue;
-                
+
                 var menuSubTabs = _driver.FindElements(By.XPath("//ul[@id='box-apps-menu']/li[" + i + "]/ul/li"));
                 for (int j = 1; j < menuSubTabs.Count + 1; j++)
                 {
                     _driver.FindElement(By.XPath("//ul[@id='box-apps-menu']/li[" + i + "]/ul/li[" + j + "]")).Click();
                     Assert.IsTrue(IsElementPresent(_driver, By.XPath("//td[@id='content']/h1")));
                 }
-                
+
             }
         }
 
@@ -70,10 +72,21 @@ namespace courseTest
         {
             _driver.Url = "http://localhost:8080/litecart/";
             Thread.Sleep(100);
-
-            var items = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li"));
-            var stickers = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li//div[contains(@class,'sticker')]"));
-            Assert.AreEqual(items.Count, stickers.Count);
+            var items = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")).Count;
+            for (int i = 1; i < items+1; i++)
+            {
+                Console.WriteLine(i);
+                Assert.IsTrue(IsElementPresent(_driver, By.XPath("//div[@class='box']/div[@class='content']/ul//a["+i+"]//div[contains(@class,'sticker')]")));
+            }
+            //.ForEach(Console.WriteLine);
+            /*items.Add(_driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")));
+            var item = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")).Count;
+            for (int i = 0; i < items; i++)
+                Assert.IsTrue(IsElementPresent(_driver, By.XPath("//ul[@class='listing-wrapper products']/li[" + i + "]//div[contains(@class,'sticker')]")));
+                var stickers = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li//div[contains(@class,'sticker')]"));
+            List <IWebElement> items = new List<IWebElement> (_driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")));
+            items.ForEach(x)
+            Assert.AreEqual(items.Count, stickers.Count);*/
         }
 
         [Test]
@@ -100,7 +113,7 @@ namespace courseTest
             //сравниваем массивы стран
             for (int i = 0; i < countriesCnt; i++)
                 Assert.IsTrue(sortCountriesName[i] == countriesName[i]);
-            
+
             //для каждой страны, имеющих кол-во зон > 0 открываем страницу этой страны и сравниваем также зоны
             foreach (string s in hasZones)
             {
@@ -119,6 +132,7 @@ namespace courseTest
                     Assert.IsTrue(sortZonesName[i] == zonesName[i]);
             }
         }
+        
         [Test]
         public void Task9()
         {
@@ -135,17 +149,67 @@ namespace courseTest
                 _driver.Url = "http://localhost:8080/litecart/admin/?app=geo_zones&doc=edit_geo_zone&page=1&geo_zone_id=" + s;
                 var zonesCnt = _driver.FindElements(By.XPath("//*[@id='table-zones']/tbody/tr/td[3]")).Count;
                 var zonesName = new List<string>();
-               
+
                 for (int i = 2; i < zonesCnt + 2; i++)
                     zonesName.Add(_driver.FindElement(By.XPath("//*[@id='table-zones']/tbody/tr[" + i + "]/td[3]/select/option[@selected='selected']")).Text);
-                
+
                 var sortZonesName = zonesName.OrderBy(x => x).ToList();
 
                 for (int i = 0; i < zonesCnt; i++)
                     Assert.IsTrue(sortZonesName[i] == zonesName[i]);
             }
         }
-                
+
+        [Test]
+        public void Task10()
+        {
+            _driver.Url = "http://localhost:8080/litecart/en/";
+            var productName1 = _driver.FindElement(By.XPath("//*[@id='box-campaigns']//div[@class='name']")).Text;
+            var regularPrice1 = _driver.FindElement(By.XPath("//*[@id='box-campaigns']//s[@class='regular-price']"));
+            var campaignPrice1 = _driver.FindElement(By.XPath("//*[@id='box-campaigns']//strong[@class='campaign-price']"));
+            var regularPriceTxt1 = regularPrice1.Text;
+            var campaignPriceTxt1 = campaignPrice1.Text;
+
+            static string[] GetColorArray(string cssColValue)
+            {
+                string colStr = cssColValue.Replace("rgba", "").Replace("(", "").Replace(")", "").Replace(",", "").Replace("rgb", "");
+                string[] colStrArray = colStr.Split(' ');
+                return colStrArray;
+            }
+
+            string[] isGreyColor1 = GetColorArray(regularPrice1.GetCssValue("color"));
+            Assert.IsTrue((isGreyColor1[0] == isGreyColor1[1]) & (isGreyColor1[1] == isGreyColor1[2]));
+            
+            string[] isRedColor1 = GetColorArray(campaignPrice1.GetCssValue("color"));
+            Assert.IsTrue((isRedColor1[1] == "0") & (isRedColor1[2] == "0"));
+
+            Console.WriteLine(campaignPrice1.GetCssValue("text-decoration-style"));
+            Assert.IsTrue(regularPrice1.GetCssValue("text-decoration").Contains("line-through")
+                & ((campaignPrice1.GetCssValue("text-decoration").Contains("solid")) || (campaignPrice1.GetCssValue("text-decoration").Contains("none")) || (campaignPrice1.GetCssValue("text-decoration-style").Contains("solid")) )
+                & (campaignPrice1.Size.Height > regularPrice1.Size.Height));
+            
+            _driver.FindElement(By.XPath("//*[@id='box-campaigns']//a[1]")).Click();
+
+            var productName2 = _driver.FindElement(By.XPath("//*[@id='box-product']//h1[@itemprop='name']")).Text;
+            var regularPrice2 = _driver.FindElement(By.XPath("//*[@id='box-product']//s[@class='regular-price']"));
+            var campaignPrice2 = _driver.FindElement(By.XPath("//*[@id='box-product']//strong[@class='campaign-price']"));
+            var regularPriceTxt2 = regularPrice2.Text;
+            var campaignPriceTxt2 = campaignPrice2.Text;
+            
+            string[] isGreyColor2 = GetColorArray(regularPrice2.GetCssValue("color"));
+            Assert.IsTrue((isGreyColor2[0] == isGreyColor2[1]) & (isGreyColor2[1] == isGreyColor2[2]));
+            string[] isRedColor2 = GetColorArray(campaignPrice2.GetCssValue("color"));
+            Assert.IsTrue((isRedColor2[1] == "0") & (isRedColor2[2] == "0"));
+
+            Assert.IsTrue(regularPrice2.GetCssValue("text-decoration").Contains("line-through")
+                & ((campaignPrice2.GetCssValue("text-decoration").Contains("solid")) || (campaignPrice2.GetCssValue("text-decoration").Contains("none")) || (campaignPrice2.GetCssValue("text-decoration-style").Contains("solid")) )
+                & (campaignPrice2.Size.Height > regularPrice2.Size.Height)
+                & (productName1 == productName2)
+                & (regularPriceTxt1 == regularPriceTxt2)
+                & (campaignPriceTxt1 == campaignPriceTxt2));
+        }
+
+
         [TearDown]
         public void Stop()
         {
