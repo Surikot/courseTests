@@ -2,6 +2,7 @@ using FsCheck.Experimental;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,10 @@ namespace courseTest
         {
            
             _driver = new ChromeDriver();
-          
+            Actions actions = new Actions(_driver);
+            _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+
+
         }
 
         [Test]
@@ -208,7 +212,53 @@ namespace courseTest
                 & (campaignPriceTxt1 == campaignPriceTxt2));
         }
 
+        [Test]
+        public void Task11()
+        {
+            _driver.Url = "http://localhost:8080/litecart/en/create_account";
+            IJavaScriptExecutor jse = (IJavaScriptExecutor) _driver;
+            Random rnd = new Random();
 
+            string firstName = "Suritest";
+            string lastName = "Pikievatest";
+            string adress = "Gamidova 18j";
+            string postCode = "36700";
+            string city = "Citytest";
+            string password = "Suriunipub32";
+            string email = "surikat" + rnd.Next(1,2022) + "@test.ru";
+            var zonesIndex = rnd.Next(-1, 65);
+            //заполнение обязательных полей
+            _driver.FindElement(By.XPath("//*[@id='create-account']//tr[2]/td[1]/input")).SendKeys(firstName);
+            _driver.FindElement(By.XPath("//*[@id='create-account']//tr[2]/td[2]/input")).SendKeys(lastName);
+            _driver.FindElement(By.XPath("//*[@id='create-account']//tr[3]/td[1]/input")).SendKeys(adress);
+            _driver.FindElement(By.XPath("//*[@id='create-account']//tr[4]/td[1]/input")).SendKeys(postCode);
+            _driver.FindElement(By.XPath("//*[@id='create-account']//tr[4]/td[2]/input")).SendKeys(city);
+            _driver.FindElement(By.XPath("//*[@id='create-account']//tr[6]/td[1]/input")).SendKeys(email);
+            _driver.FindElement(By.XPath("//*[@id='create-account']//tr[6]/td[2]/input")).SendKeys("+123456");
+            _driver.FindElement(By.XPath("//*[@id='create-account']//tr[8]/td[1]/input")).SendKeys(password);
+            _driver.FindElement(By.XPath("//*[@id='create-account']//tr[8]/td[2]/input")).SendKeys(password);
+            //выбор US и рандомной зоны
+            jse.ExecuteScript("arguments[0].selectedIndex = 224; arguments[0].dispatchEvent(new Event('change'))", _driver.FindElement(By.XPath("//*[@id='create-account']//tr[5]/td[1]/select")));
+            jse.ExecuteScript("arguments[0].selectedIndex = " + zonesIndex + "; arguments[0].dispatchEvent(new Event('change'))", _driver.FindElement(By.XPath("//*[@id='create-account']//tr[5]/td[2]/select")));
+            //содание аккаунта
+            _driver.FindElement(By.XPath("//*[@id='create-account']//button[@name='create_account']")).Click();
+            //разлогин
+            _driver.FindElement(By.XPath("//*[contains (text(), 'Logout')]")).Click();
+            //смена страны и зоны для успешной авторизации
+            _driver.FindElement(By.XPath("//*[@id='region']//a")).Click();
+            jse.ExecuteScript("arguments[0].selectedIndex = 224; arguments[0].dispatchEvent(new Event('change'))", _driver.FindElement(By.XPath("//*[@id='box-regional-settings']//select[@name='country_code']")));
+            jse.ExecuteScript("arguments[0].selectedIndex = " + zonesIndex + "; arguments[0].dispatchEvent(new Event('change'))", _driver.FindElement(By.XPath("//*[@id='box-regional-settings']//select[@name='zone_code']")));
+            _driver.FindElement(By.XPath("//*[@id='box-regional-settings']//button[@name='save']")).Click();
+            //вход в ранее созданную учетную запись
+            _driver.FindElement(By.XPath("//*[@id='box-account-login']//input[@name='email']")).SendKeys(email);
+            _driver.FindElement(By.XPath("//*[@id='box-account-login']//input[@name='password']")).SendKeys(password);
+            _driver.FindElement(By.XPath("//*[@id='box-account-login']//button[@name='login']")).Click();
+            //разлогин
+            _driver.FindElement(By.XPath("//*[contains (text(), 'Logout')]")).Click();
+
+
+
+        }
         [TearDown]
         public void Stop()
         {
