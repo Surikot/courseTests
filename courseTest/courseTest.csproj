@@ -22,4 +22,14 @@
     <PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="img\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="img\product_img.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

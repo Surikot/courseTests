@@ -44,7 +44,7 @@ namespace courseTest
         {
            
             _driver = new ChromeDriver();
-            _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+            _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(0.5);
 
 
         }
@@ -62,8 +62,10 @@ namespace courseTest
                     continue;
 
                 var menuSubTabs = _driver.FindElements(By.XPath("//ul[@id='box-apps-menu']/li[" + i + "]/ul/li"));
+                
                 for (int j = 1; j < menuSubTabs.Count + 1; j++)
                 {
+                 
                     _driver.FindElement(By.XPath("//ul[@id='box-apps-menu']/li[" + i + "]/ul/li[" + j + "]")).Click();
                     Assert.IsTrue(IsElementPresent(_driver, By.XPath("//td[@id='content']/h1")));
                 }
@@ -74,23 +76,23 @@ namespace courseTest
         [Test]
         public void Task7()
         {
-            _driver.Url = "http://localhost:8080/litecart/";
-            Thread.Sleep(100);
-            var items = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")).Count;
-            for (int i = 1; i < items+1; i++)
-            {
-                Console.WriteLine(i);
-                Assert.IsTrue(IsElementPresent(_driver, By.XPath("//div[@class='box']/div[@class='content']/ul//a["+i+"]//div[contains(@class,'sticker')]")));
-            }
-            //.ForEach(Console.WriteLine);
-            /*items.Add(_driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")));
-            var item = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")).Count;
-            for (int i = 0; i < items; i++)
-                Assert.IsTrue(IsElementPresent(_driver, By.XPath("//ul[@class='listing-wrapper products']/li[" + i + "]//div[contains(@class,'sticker')]")));
-                var stickers = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li//div[contains(@class,'sticker')]"));
-            List <IWebElement> items = new List<IWebElement> (_driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")));
-            items.ForEach(x)
-            Assert.AreEqual(items.Count, stickers.Count);*/
+            /* _driver.Url = "http://localhost:8080/litecart/";
+             Thread.Sleep(100);
+             var items = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")).Count;
+             for (int i = 1; i < items+1; i++)
+             {
+                 Console.WriteLine(i);
+                 Assert.IsTrue(IsElementPresent(_driver, By.XPath("//div[@class='box']/div[@class='content']/ul//a["+i+"]//div[contains(@class,'sticker')]")));
+             }
+             //.ForEach(Console.WriteLine);
+             items.Add(_driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")));
+             var item = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")).Count;
+             for (int i = 0; i < items; i++)
+                 Assert.IsTrue(IsElementPresent(_driver, By.XPath("//ul[@class='listing-wrapper products']/li[" + i + "]//div[contains(@class,'sticker')]")));
+                 var stickers = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li//div[contains(@class,'sticker')]"));
+             List <IWebElement> items = new List<IWebElement> (_driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")));
+             items.ForEach(x)
+             Assert.AreEqual(items.Count, stickers.Count);*/
         }
 
         [Test]
@@ -275,7 +277,7 @@ namespace courseTest
          
             _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@name='quantity']")).Clear();
             _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@name='quantity']")).SendKeys("12,00");
-            _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@name='new_images[]']")).SendKeys(Directory.GetCurrentDirectory() + @"\img\product_img.jpg");
+            _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@name='new_images[]']")).SendKeys(AppDomain.CurrentDomain.BaseDirectory + @"\img\product_img.jpg");
            
             jse.ExecuteScript("arguments[0].setAttribute('value', '1990-01-01')", _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@name='date_valid_from']")));
             jse.ExecuteScript("arguments[0].setAttribute('value', '2000-12-31')", _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@name='date_valid_to']")));
