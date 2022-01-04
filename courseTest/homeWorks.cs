@@ -7,6 +7,7 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -15,7 +16,7 @@ namespace courseTest
     public class Tests
     {
         private ChromeDriver _driver;
-
+        
         bool IsElementPresent(WebDriver driver, By locator)
         {
             try
@@ -43,7 +44,6 @@ namespace courseTest
         {
            
             _driver = new ChromeDriver();
-            Actions actions = new Actions(_driver);
             _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
 
 
@@ -216,7 +216,7 @@ namespace courseTest
         public void Task11()
         {
             _driver.Url = "http://localhost:8080/litecart/en/create_account";
-            IJavaScriptExecutor jse = (IJavaScriptExecutor) _driver;
+            IJavaScriptExecutor jse = (IJavaScriptExecutor)_driver;
             Random rnd = new Random();
 
             string firstName = "Suritest";
@@ -262,21 +262,54 @@ namespace courseTest
         public void Task12()
         {
             Random rnd = new Random();
+            Actions actions = new Actions(_driver);
+            var forProductNum = rnd.Next(0, 199);
+            IJavaScriptExecutor jse = (IJavaScriptExecutor)_driver;
             AuthAdmin("admin", "admin");
             _driver.FindElement(By.XPath("//*[@id='app-']//span[contains (text(), 'Catalog')]")).Click();
             _driver.FindElement(By.XPath("//*[@id='content']//a[contains (text(), ' Add New Product')]")).Click();
             //заполнение General
             _driver.FindElement(By.XPath("//*[@id='tab-general']//label[contains(text(),' Enabled')]/input[@type='radio']")).Click();
-            _driver.FindElement(By.XPath("//*[@id='tab-general']//input[contains(@name,'name')]")).SendKeys("ProductName" + rnd.Next(0, 199));
+            _driver.FindElement(By.XPath("//*[@id='tab-general']//input[contains(@name,'name')]")).SendKeys("ProductName" + forProductNum);
             _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@type='checkbox'][@name='product_groups[]'][@value='1-" + rnd.Next(1, 4) + "']")).Click();
          
             _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@name='quantity']")).Clear();
             _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@name='quantity']")).SendKeys("12,00");
-            _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@name='new_images[]']")).SendKeys("/img/product_img.jpg");
+            _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@name='new_images[]']")).SendKeys(Directory.GetCurrentDirectory() + @"\img\product_img.jpg");
+           
+            jse.ExecuteScript("arguments[0].setAttribute('value', '1990-01-01')", _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@name='date_valid_from']")));
+            jse.ExecuteScript("arguments[0].setAttribute('value', '2000-12-31')", _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@name='date_valid_to']")));
+            //заполнение Information
+            _driver.FindElement(By.XPath("//*[@id='content']//a[contains(text(),'Information')]")).Click();
+            SelectElement manufacturer = new SelectElement(_driver.FindElement(By.XPath("//select[@name='manufacturer_id']")));
+            manufacturer.SelectByValue("1");
+            _driver.FindElement(By.XPath("//input[contains(@name,'keywords')]")).SendKeys("something");
+            _driver.FindElement(By.XPath("//input[contains(@name,'short_description')]")).SendKeys("Short Description");
+            _driver.FindElement(By.XPath("//*[@id='tab-information']//div[@contenteditable='true']")).SendKeys("Description Description Description");
+            _driver.FindElement(By.XPath("//input[contains(@name,'head_title')]")).SendKeys("Head Title");
+            _driver.FindElement(By.XPath("//input[contains(@name,'meta_description')]")).SendKeys("Meta Description");
+            //заполнение Data
+            _driver.FindElement(By.XPath("//*[@id='content']//a[contains(text(),'Data')]")).Click();
+            _driver.FindElement(By.XPath("//input[contains(@name,'sku')]")).SendKeys("SKU");
+            _driver.FindElement(By.XPath("//input[contains(@name,'gtin')]")).SendKeys("GTIN");
+            _driver.FindElement(By.XPath("//input[contains(@name,'taric')]")).SendKeys("TARIC");
 
+            _driver.FindElement(By.XPath("//*[@id='tab-data']//input[@name='weight']")).Clear();
+            _driver.FindElement(By.XPath("//*[@id='tab-data']//input[@name='weight']")).SendKeys("2,00");
 
+            _driver.FindElement(By.XPath("//*[@id='tab-data']//input[@name='dim_x']")).Clear();
+            _driver.FindElement(By.XPath("//*[@id='tab-data']//input[@name='dim_x']")).SendKeys("1,00");
 
-            Thread.Sleep(8000);
+            _driver.FindElement(By.XPath("//*[@id='tab-data']//input[@name='dim_y']")).Clear();
+            _driver.FindElement(By.XPath("//*[@id='tab-data']//input[@name='dim_y']")).SendKeys("3,00");
+
+            _driver.FindElement(By.XPath("//*[@id='tab-data']//input[@name='dim_z']")).Clear();
+            _driver.FindElement(By.XPath("//*[@id='tab-data']//input[@name='dim_z']")).SendKeys("4,00");
+            jse.ExecuteScript("arguments[0].value = 'Attributes'", _driver.FindElement(By.XPath("//textarea[contains(@name,'attributes')]")));
+            _driver.FindElement(By.XPath("//*[@id='content']//button[@name='save']")).Click();
+
+            Assert.IsTrue(IsElementPresent(_driver, By.XPath("//*[@id='content']//a[contains(text(),'ProductName" + forProductNum + "')]")));
+
 
 
         }
