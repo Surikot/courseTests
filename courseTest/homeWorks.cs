@@ -29,7 +29,7 @@ namespace courseTest
             }
         }
 
-        public void authAdmin(string username, string password)
+        public void AuthAdmin(string username, string password)
         {
             _driver.Url = "http://localhost:8080/litecart/admin";
             _driver.FindElement(By.Name("username")).SendKeys(username);
@@ -52,7 +52,7 @@ namespace courseTest
         [Test]
         public void Task6()
         {
-            authAdmin("admin", "admin");
+            AuthAdmin("admin", "admin");
             var menuTabs = _driver.FindElements(By.CssSelector("ul#box-apps-menu > li"));
             for (int i = 1; i < menuTabs.Count + 1; i++)
             {
@@ -96,7 +96,7 @@ namespace courseTest
         [Test]
         public void Task8()
         {
-            authAdmin("admin", "admin");
+            AuthAdmin("admin", "admin");
             _driver.Url = "http://localhost:8080/litecart/admin/?app=countries&doc=countries";
             //получаем кол-во стран
             var countriesCnt = _driver.FindElements(By.XPath("//*[@id='content']/form/table/tbody/tr/td[6]")).Count;
@@ -140,7 +140,7 @@ namespace courseTest
         [Test]
         public void Task9()
         {
-            authAdmin("admin", "admin");
+            AuthAdmin("admin", "admin");
             _driver.Url = "http://localhost:8080/litecart/admin/?app=geo_zones&doc=geo_zones";
             var countriesCnt = _driver.FindElements(By.XPath("//*[@id='content']/form/table/tbody/tr/td[2]")).Count;
             List<string> zonesID = new List<string>();
@@ -226,7 +226,7 @@ namespace courseTest
             string city = "Citytest";
             string password = "Suriunipub32";
             string email = "surikat" + rnd.Next(1,2022) + "@test.ru";
-            var zonesIndex = rnd.Next(-1, 65);
+            var zonesIndex = rnd.Next(0, 65);
             //заполнение обязательных полей
             _driver.FindElement(By.XPath("//*[@id='create-account']//tr[2]/td[1]/input")).SendKeys(firstName);
             _driver.FindElement(By.XPath("//*[@id='create-account']//tr[2]/td[2]/input")).SendKeys(lastName);
@@ -255,7 +255,28 @@ namespace courseTest
             _driver.FindElement(By.XPath("//*[@id='box-account-login']//button[@name='login']")).Click();
             //разлогин
             _driver.FindElement(By.XPath("//*[contains (text(), 'Logout')]")).Click();
+        }
 
+
+        [Test]
+        public void Task12()
+        {
+            Random rnd = new Random();
+            AuthAdmin("admin", "admin");
+            _driver.FindElement(By.XPath("//*[@id='app-']//span[contains (text(), 'Catalog')]")).Click();
+            _driver.FindElement(By.XPath("//*[@id='content']//a[contains (text(), ' Add New Product')]")).Click();
+            //заполнение General
+            _driver.FindElement(By.XPath("//*[@id='tab-general']//label[contains(text(),' Enabled')]/input[@type='radio']")).Click();
+            _driver.FindElement(By.XPath("//*[@id='tab-general']//input[contains(@name,'name')]")).SendKeys("ProductName" + rnd.Next(0, 199));
+            _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@type='checkbox'][@name='product_groups[]'][@value='1-" + rnd.Next(1, 4) + "']")).Click();
+         
+            _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@name='quantity']")).Clear();
+            _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@name='quantity']")).SendKeys("12,00");
+            _driver.FindElement(By.XPath("//*[@id='tab-general']//input[@name='new_images[]']")).SendKeys("/img/product_img.jpg");
+
+
+
+            Thread.Sleep(8000);
 
 
         }
