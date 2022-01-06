@@ -4,6 +4,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.WaitHelpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -44,7 +45,7 @@ namespace courseTest
         {
            
             _driver = new ChromeDriver();
-            _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(0.5);
+            //_driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(0.5);
 
 
         }
@@ -311,11 +312,63 @@ namespace courseTest
             _driver.FindElement(By.XPath("//*[@id='content']//button[@name='save']")).Click();
 
             Assert.IsTrue(IsElementPresent(_driver, By.XPath("//*[@id='content']//a[contains(text(),'ProductName" + forProductNum + "')]")));
+        }
 
+        [Test]
+        public void Task13()
+        {
+            WebDriverWait wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
+            IJavaScriptExecutor jse = (IJavaScriptExecutor)_driver;
+            Random rnd = new Random();
+            _driver.Url = "http://localhost:8080/litecart/en/";
+            var cartCount = Int32.Parse(_driver.FindElement(By.XPath("//*[@id='cart']//span[@class ='quantity']")).Text);
 
+            void AddToCart()
+            {
+                _driver.FindElement(By.XPath("//*[@class = 'product column shadow hover-light']")).Click();
+                if (IsElementPresent(_driver, By.XPath("//*[@id='box-product']//select[contains(@name,'options')]")))
+                {
+                    jse.ExecuteScript("arguments[0].selectedIndex = '" + rnd.Next(1, 4) + "'", _driver.FindElement(By.XPath("//*[@id='box-product']//select[contains(@name,'options')]")));
+
+                }
+
+                _driver.FindElement(By.XPath("//*[@id='box-product']//button[@name='add_cart_product']")).Click();
+                cartCount++;
+                wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@id='cart']//span[text() ='" + cartCount + "']")));
+                _driver.FindElement(By.XPath("//*[@id='site-menu']//i[@title='Home']")).Click();
+            }
+
+            void ClaerCart(int count)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    if (IsElementPresent(_driver, By.XPath("//*[@id='order_confirmation-wrapper']/table")))
+                    {
+
+                        wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='box-checkout-cart']//li[1][@class='item']")));
+                        var itemName = _driver.FindElement(By.XPath("//*[@id='box-checkout-cart']//li[1][@class='item']//strong")).Text;
+
+                        _driver.FindElement(By.XPath("//*[@id='box-checkout-cart']//button[text()='Remove']")).Click();
+                    
+                        if (wait.Until(ExpectedConditions.StalenessOf(_driver.FindElement(By.XPath("//*[@id='order_confirmation-wrapper']/table//td[text()='" + itemName + "']")))))
+                            continue;
+                    }
+                }
+            }
+
+            AddToCart();
+
+            _driver.FindElement(By.XPath("//*[@id='cart']/a[contains(text(),'Checkout')]")).Click();
+            _driver.FindElement(By.XPath("//*[@id='site-menu']//i[@title='Home']")).Click();
+            AddToCart();
+            AddToCart();
+            _driver.FindElement(By.XPath("//*[@id='cart']/a[contains(text(),'Checkout')]")).Click();
+            ClaerCart(cartCount);
+            //
 
         }
-        [TearDown]
+
+            [TearDown]
         public void Stop()
         {
              _driver.Quit();
