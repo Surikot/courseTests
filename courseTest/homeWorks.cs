@@ -77,23 +77,22 @@ namespace courseTest
         [Test]
         public void Task7()
         {
-            /* _driver.Url = "http://localhost:8080/litecart/";
-             Thread.Sleep(100);
-             var items = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")).Count;
-             for (int i = 1; i < items+1; i++)
-             {
-                 Console.WriteLine(i);
-                 Assert.IsTrue(IsElementPresent(_driver, By.XPath("//div[@class='box']/div[@class='content']/ul//a["+i+"]//div[contains(@class,'sticker')]")));
-             }
-             //.ForEach(Console.WriteLine);
-             items.Add(_driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")));
-             var item = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")).Count;
-             for (int i = 0; i < items; i++)
-                 Assert.IsTrue(IsElementPresent(_driver, By.XPath("//ul[@class='listing-wrapper products']/li[" + i + "]//div[contains(@class,'sticker')]")));
-                 var stickers = _driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li//div[contains(@class,'sticker')]"));
-             List <IWebElement> items = new List<IWebElement> (_driver.FindElements(By.XPath("//ul[@class='listing-wrapper products']/li")));
-             items.ForEach(x)
-             Assert.AreEqual(items.Count, stickers.Count);*/
+
+            _driver.Url = "http://localhost:8080/litecart/";
+
+            var itemsPopular = _driver.FindElements(By.XPath("//*[@id='box-most-popular']//ul/li")).Count;
+            for (int i = 1; i < itemsPopular + 1; i++)
+                Assert.IsTrue(IsElementPresent(_driver, By.XPath("//*[@id='box-most-popular']//ul/li[" + i + "]//div[contains(@class,'sticker')]")));
+            
+            var campaigns = _driver.FindElements(By.XPath("//*[@id='box-campaigns']//ul/li")).Count;
+            for (int i = 1; i < campaigns + 1; i++)
+                Assert.IsTrue(IsElementPresent(_driver, By.XPath("//*[@id='box-campaigns']//ul/li[" + i + "]//div[contains(@class,'sticker')]")));
+            
+            var latestProducts = _driver.FindElements(By.XPath("//*[@id='box-latest-products']//ul/li")).Count;
+            for (int i = 1; i < latestProducts + 1; i++)
+                Assert.IsTrue(IsElementPresent(_driver, By.XPath("//*[@id='box-latest-products']//ul/li[" + i + "]//div[contains(@class,'sticker')]")));
+
+          
         }
 
         [Test]
