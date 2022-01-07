@@ -363,8 +363,47 @@ namespace courseTest
             //
 
         }
+        
+        [Test]
+        public void Task14()
+        {
+            WebDriverWait wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
 
-            [TearDown]
+            Func<IWebDriver, string> ThereIsWindowOtherThan(ICollection<string> oldWin)
+            {
+                Func<IWebDriver, string> action = driver =>
+                {
+                    ICollection<string> allWin = driver.WindowHandles;
+                    var newWin = allWin.FirstOrDefault(x => !oldWin.Contains(x));
+                    return newWin;
+                };
+
+                return action;
+            }
+
+            AuthAdmin("admin", "admin");
+            _driver.Url = "http://localhost:8080/litecart/admin/?app=countries&doc=countries";
+            _driver.FindElement(By.XPath("//*[@id='content']//a[text()=' Add New Country']")).Click();
+            IList<IWebElement> externaLinks = _driver.FindElements(By.XPath("//i[@class='fa fa-external-link']"));
+            foreach (IWebElement externaLink in externaLinks)
+            {
+                string mainWindow = _driver.CurrentWindowHandle;
+                ICollection<string> oldWindows = _driver.WindowHandles.ToList();
+                externaLink.Click(); 
+                Thread.Sleep(100);//для себя чтоб увидеть
+                
+               string newWindow = wait.Until(ThereIsWindowOtherThan(oldWindows));
+               _driver.SwitchTo().Window(newWindow);
+               _driver.Close();
+               _driver.SwitchTo().Window(mainWindow);
+                
+            }
+
+
+        }
+
+
+        [TearDown]
         public void Stop()
         {
              _driver.Quit();
