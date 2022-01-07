@@ -340,13 +340,13 @@ namespace courseTest
                 {
                     if (IsElementPresent(_driver, By.XPath("//*[@id='order_confirmation-wrapper']/table")))
                     {
-
                         wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='box-checkout-cart']//li[1][@class='item']")));
                         var itemName = _driver.FindElement(By.XPath("//*[@id='box-checkout-cart']//li[1][@class='item']//strong")).Text;
+                        var productInTable = _driver.FindElement(By.XPath("//*[@id='order_confirmation-wrapper']/table//td[text()='" + itemName + "']"));
 
                         _driver.FindElement(By.XPath("//*[@id='box-checkout-cart']//button[text()='Remove']")).Click();
                     
-                        if (wait.Until(ExpectedConditions.StalenessOf(_driver.FindElement(By.XPath("//*[@id='order_confirmation-wrapper']/table//td[text()='" + itemName + "']")))))
+                        if (wait.Until(ExpectedConditions.StalenessOf(productInTable)))
                             continue;
                     }
                 }
