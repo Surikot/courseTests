@@ -79,20 +79,17 @@ namespace courseTest
         {
 
             _driver.Url = "http://localhost:8080/litecart/";
-
-            var itemsPopular = _driver.FindElements(By.XPath("//*[@id='box-most-popular']//ul/li")).Count;
-            for (int i = 1; i < itemsPopular + 1; i++)
-                Assert.IsTrue(IsElementPresent(_driver, By.XPath("//*[@id='box-most-popular']//ul/li[" + i + "]//div[contains(@class,'sticker')]")));
-            
-            var campaigns = _driver.FindElements(By.XPath("//*[@id='box-campaigns']//ul/li")).Count;
-            for (int i = 1; i < campaigns + 1; i++)
-                Assert.IsTrue(IsElementPresent(_driver, By.XPath("//*[@id='box-campaigns']//ul/li[" + i + "]//div[contains(@class,'sticker')]")));
-            
-            var latestProducts = _driver.FindElements(By.XPath("//*[@id='box-latest-products']//ul/li")).Count;
-            for (int i = 1; i < latestProducts + 1; i++)
-                Assert.IsTrue(IsElementPresent(_driver, By.XPath("//*[@id='box-latest-products']//ul/li[" + i + "]//div[contains(@class,'sticker')]")));
-
-          
+            IList<IWebElement> productDivs = _driver.FindElements(By.XPath("//*[@class='listing-wrapper products']"));
+            foreach (IWebElement productDiv in productDivs)
+            {
+                IList<IWebElement> products = productDiv.FindElements(By.XPath("//*[@class='product column shadow hover-light']"));
+                foreach (IWebElement product in products)
+                {
+                    var stickerCount = product.FindElements(By.XPath("//div[contains(@class,'sticker')]")).Count;
+                    Assert.IsTrue(stickerCount > 0);
+                }
+            }
+       
         }
 
         [Test]
