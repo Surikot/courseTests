@@ -45,7 +45,7 @@ namespace courseTest
         {
            
             _driver = new ChromeDriver();
-            //_driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(0.5);
+            _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(0.5);
 
 
         }
@@ -79,16 +79,14 @@ namespace courseTest
         {
 
             _driver.Url = "http://localhost:8080/litecart/";
-            IList<IWebElement> productDivs = _driver.FindElements(By.XPath("//*[@class='listing-wrapper products']"));
-            foreach (IWebElement productDiv in productDivs)
+            
+            IList<IWebElement> products = _driver.FindElements(By.CssSelector("li.product"));
+            foreach (IWebElement product in products)
             {
-                IList<IWebElement> products = productDiv.FindElements(By.XPath("//*[@class='product column shadow hover-light']"));
-                foreach (IWebElement product in products)
-                {
-                    var stickerCount = product.FindElements(By.XPath("//div[contains(@class,'sticker')]")).Count;
-                    Assert.IsTrue(stickerCount > 0);
-                }
+               var stickerCount = product.FindElements(By.CssSelector("div.sticker")).Count;
+               Assert.IsTrue(stickerCount == 1);
             }
+            
        
         }
 
