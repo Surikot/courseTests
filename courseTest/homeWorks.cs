@@ -178,16 +178,22 @@ namespace courseTest
                 return colStrArray;
             }
 
+            static bool CompareFrontSize(string elem1 , string elem2)
+            {
+                float elem1FontSize = float.Parse(elem1.Replace("px", "").Replace(".", ","));
+                float elem2FontSize = float.Parse(elem2.Replace("px", "").Replace(".", ","));
+
+                if (elem1FontSize > elem2FontSize) return true;
+                else return false;
+            }
             string[] isGreyColor1 = GetColorArray(regularPrice1.GetCssValue("color"));
             Assert.IsTrue((isGreyColor1[0] == isGreyColor1[1]) & (isGreyColor1[1] == isGreyColor1[2]));
             
             string[] isRedColor1 = GetColorArray(campaignPrice1.GetCssValue("color"));
             Assert.IsTrue((isRedColor1[1] == "0") & (isRedColor1[2] == "0"));
-
             Assert.IsTrue(regularPrice1.GetCssValue("text-decoration").Contains("line-through")
                 & ((campaignPrice1.GetCssValue("text-decoration").Contains("solid")) || (campaignPrice1.GetCssValue("text-decoration").Contains("none")) || (campaignPrice1.GetCssValue("text-decoration-style").Contains("solid")) )
-                & (campaignPrice1.Size.Height > regularPrice1.Size.Height));
-            
+                & (CompareFrontSize(campaignPrice1.GetCssValue("font-size"), regularPrice1.GetCssValue("font-size"))));           
             _driver.FindElement(By.XPath("//*[@id='box-campaigns']//a[1]")).Click();
 
             var productName2 = _driver.FindElement(By.XPath("//*[@id='box-product']//h1[@itemprop='name']")).Text;
@@ -203,7 +209,7 @@ namespace courseTest
 
             Assert.IsTrue(regularPrice2.GetCssValue("text-decoration").Contains("line-through")
                 & ((campaignPrice2.GetCssValue("text-decoration").Contains("solid")) || (campaignPrice2.GetCssValue("text-decoration").Contains("none")) || (campaignPrice2.GetCssValue("text-decoration-style").Contains("solid")) )
-                & (campaignPrice2.Size.Height > regularPrice2.Size.Height)
+                & (CompareFrontSize(campaignPrice2.GetCssValue("font-size"), regularPrice2.GetCssValue("font-size")))
                 & (productName1 == productName2)
                 & (regularPriceTxt1 == regularPriceTxt2)
                 & (campaignPriceTxt1 == campaignPriceTxt2));
