@@ -43,10 +43,12 @@ namespace courseTest
         [SetUp]
         public void Setup()
         {
-           
-            _driver = new ChromeDriver();
-            _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(0.5);
+            ChromeOptions options = new ChromeOptions();
 
+            options.SetLoggingPreference(LogType.Browser, LogLevel.All);
+            _driver = new ChromeDriver(options);
+            _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(0.5);
+            
 
         }
 
@@ -260,7 +262,6 @@ namespace courseTest
             _driver.FindElement(By.XPath("//*[contains (text(), 'Logout')]")).Click();
         }
 
-
         [Test]
         public void Task12()
         {
@@ -406,6 +407,30 @@ namespace courseTest
 
         }
 
+        [Test]
+        public void Task17()
+        {
+            AuthAdmin("admin","admin");
+            _driver.Url = "http://localhost:8080/litecart/admin/?app=catalog&doc=catalog&category_id=1";
+            while(IsElementPresent(_driver, By.CssSelector(".fa-folder")))//открываем все папки
+            {
+                _driver.FindElement(By.XPath("*//i[@class ='fa fa-folder']/../a")).Click();
+            }
+
+            var productsList = _driver.FindElements(By.CssSelector(".row>td [name*=products]")).Count;
+            for (var i = 0; i < productsList; i++)
+            {
+                _driver.FindElements(By.CssSelector(".row > td > a:not([title='Edit'])"))[i].Click();
+                foreach (LogEntry l in _driver.Manage().Logs.GetLog("browser"))
+                {
+                    Console.WriteLine(l);
+                }
+
+                _driver.FindElement(By.Name("cancel")).Click();
+            }
+
+
+        }
 
         [TearDown]
         public void Stop()
