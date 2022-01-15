@@ -1,4 +1,3 @@
-using FsCheck.Experimental;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -7,10 +6,10 @@ using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Threading;
+using courseTest.PageObjects;
+
 
 namespace courseTest
 {
@@ -429,6 +428,30 @@ namespace courseTest
                 _driver.FindElement(By.Name("cancel")).Click();
             }
 
+
+        }
+        [Test]
+        public void Task19()
+        {
+            _driver.Url = "http://localhost:8080/litecart/en/";
+
+            var mainMenu = new MainMenuPageObject(_driver);
+            var productMenu = new ProductMenuPageObject(_driver);
+            var cartMenu = new CartMenuPageObject(_driver);
+
+            mainMenu.OpenRandomProduct();
+            productMenu
+                .AddToCart()
+                .GoHome();
+            mainMenu.OpenRandomProduct();
+            productMenu.AddToCart();
+            mainMenu.OpenRandomProduct();
+            productMenu
+                .AddToCart()
+                .GoHome();
+            int count = productMenu.GetCurrentCartCount();
+            mainMenu.OpenCart();
+            cartMenu.ClearCart(count);
 
         }
 
