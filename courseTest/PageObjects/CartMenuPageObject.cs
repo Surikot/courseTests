@@ -10,8 +10,6 @@ namespace courseTest.PageObjects
         private IWebDriver _driver;
         private WebDriverWait _wait;
         private readonly By _removeBtn = By.Name("remove_cart_item");
-    
-
         public CartMenuPageObject(IWebDriver driver)
         {
             _driver = driver;

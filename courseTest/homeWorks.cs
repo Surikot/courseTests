@@ -452,7 +452,6 @@ namespace courseTest
             int count = productMenu.GetCurrentCartCount();
             mainMenu.OpenCart();
             cartMenu.ClearCart(count);
-
         }
 
         [TearDown]

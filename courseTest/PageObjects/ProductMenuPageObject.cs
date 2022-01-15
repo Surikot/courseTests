@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
@@ -11,7 +9,6 @@ namespace courseTest.PageObjects
     {
         private IWebDriver _driver;
         private WebDriverWait _wait;
-
         Random rnd = new Random();
         private readonly By _productOptions = By.CssSelector(".buy_now  select");
         private readonly By _cartCount = By.CssSelector("#cart span.quantity");
@@ -22,7 +19,6 @@ namespace courseTest.PageObjects
         {
             _driver = driver;
             _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
-
         }
         public void ClickRandomProductOptious()
         {
